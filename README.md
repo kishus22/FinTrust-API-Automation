@@ -1,1 +1,1 @@
-[![FinTrust API Automation](https://github.com/kishus22/FinTrust-API-Automation/actions/workflows/automation.yml/badge.svg)](https://github.com/kishus22/FinTrust-API-Automation/actions/workflows/automation.yml)
+
