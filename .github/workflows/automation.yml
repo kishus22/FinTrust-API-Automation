@@ -51,3 +51,9 @@ jobs:
           BASE_URL: http://127.0.0.1:5000
         run: |
           pytest --html=report.html --self-contained-html
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: report.html
