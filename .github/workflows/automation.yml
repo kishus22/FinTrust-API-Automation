@@ -11,37 +11,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout automation repo
+      # 1️⃣ Checkout Automation Repo
       - name: Checkout Automation Repo
         uses: actions/checkout@v3
 
-      # Checkout backend repo
+      # 2️⃣ Checkout Backend Repo
       - name: Checkout Backend Repo
         uses: actions/checkout@v3
         with:
           repository: kishus22/FinTrust-Backend
           path: backend
 
-      # Start backend using Docker Compose
+      # 3️⃣ Build & Start Backend with Docker Compose
       - name: Build and Start Backend
         run: |
           cd backend
           docker compose up -d --build
-          sleep 20
 
-      # Setup Python for automation
+      # 4️⃣ Wait Until Backend is Ready
+      - name: Wait for Backend
+        run: |
+          echo "Waiting for backend to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5000 > /dev/null; then
+              echo "Backend is ready!"
+              exit 0
+            fi
+            echo "Still waiting..."
+            sleep 3
+          done
+          echo "Backend did not start in time"
+          exit 1
+
+      # 5️⃣ Setup Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # Install test dependencies
+      # 6️⃣ Install Automation Dependencies
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
 
-      # Run test suite
-      - name: Run API Tests
+      # 7️⃣ Run API Test Suite
+      - name: Run Tests
         env:
           BASE_URL: http://localhost:5000
         run: |
