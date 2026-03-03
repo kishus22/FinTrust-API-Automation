@@ -11,49 +11,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout automation repo
-      - name: Checkout automation repo
+      # Checkout automation repo
+      - name: Checkout Automation Repo
         uses: actions/checkout@v3
 
-      # 2️⃣ Checkout backend repo
-      - name: Checkout backend repo
+      # Checkout backend repo
+      - name: Checkout Backend Repo
         uses: actions/checkout@v3
         with:
-          repository: kishus22/FinTrust-Backend
+          repository: YOUR_USERNAME/FinTrust-Backend
           path: backend
 
-      # 3️⃣ Setup Python
+      # Start backend using Docker Compose
+      - name: Build and Start Backend
+        run: |
+          cd backend
+          docker compose up -d --build
+          sleep 20
+
+      # Setup Python for automation
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # 4️⃣ Install automation dependencies
-      - name: Install automation dependencies
+      # Install test dependencies
+      - name: Install Dependencies
         run: |
           pip install -r requirements.txt
 
-      # 5️⃣ Build backend Docker image
-      - name: Build backend Docker image
-        run: |
-          cd backend
-          docker build -t fintrust-backend .
-
-      # 6️⃣ Run backend container
-      - name: Run backend container
-        run: |
-          docker run -d -p 5000:5000 fintrust-backend
-          sleep 5
-
-      # 7️⃣ Run tests
-      - name: Run tests
+      # Run test suite
+      - name: Run API Tests
         env:
-          BASE_URL: http://127.0.0.1:5000
+          BASE_URL: http://localhost:5000
         run: |
           pytest --html=report.html --self-contained-html
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-report
-          path: report.html
