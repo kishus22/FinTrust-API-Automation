@@ -3,60 +3,39 @@ name: FinTrust API Automation
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout Automation Repo
-      - name: Checkout Automation Repo
-        uses: actions/checkout@v3
+      # Checkout automation repo
+      - uses: actions/checkout@v3
 
-      # 2️⃣ Checkout Backend Repo
-      - name: Checkout Backend Repo
-        uses: actions/checkout@v3
+      # Checkout backend repo
+      - uses: actions/checkout@v3
         with:
           repository: kishus22/FinTrust-Backend
           path: backend
 
-      # 3️⃣ Build & Start Backend with Docker Compose
-      - name: Build and Start Backend
+      # Build and start backend
+      - name: Start Backend
         run: |
           cd backend
           docker compose up -d --build
+          sleep 30
 
-      # 4️⃣ Wait Until Backend is Ready
-      - name: Wait for Backend
-        run: |
-          echo "Waiting for backend to be ready..."
-          for i in {1..30}; do
-            if curl -s http://localhost:5000 > /dev/null; then
-              echo "Backend is ready!"
-              exit 0
-            fi
-            echo "Still waiting..."
-            sleep 3
-          done
-          echo "Backend did not start in time"
-          exit 1
-
-      # 5️⃣ Setup Python
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      # Setup Python
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # 6️⃣ Install Automation Dependencies
+      # Install automation requirements
       - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      # 7️⃣ Run API Test Suite
+      # Run tests
       - name: Run Tests
         env:
           BASE_URL: http://localhost:5000
-        run: |
-          pytest --html=report.html --self-contained-html
+        run: pytest --html=report.html --self-contained-html
