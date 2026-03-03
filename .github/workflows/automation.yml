@@ -19,7 +19,7 @@ jobs:
       - name: Checkout Backend Repo
         uses: actions/checkout@v3
         with:
-          repository: YOUR_USERNAME/FinTrust-Backend
+          repository: kishus22/FinTrust-Backend
           path: backend
 
       # Start backend using Docker Compose
