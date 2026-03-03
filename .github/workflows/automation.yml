@@ -19,7 +19,7 @@ jobs:
       - name: Checkout backend repo
         uses: actions/checkout@v3
         with:
-          repository: https://github.com/kishus22/FinTrust-Backend
+          repository: kishus22/FinTrust-Backend
           path: backend
 
       # 3️⃣ Setup Python
